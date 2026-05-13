@@ -3,21 +3,17 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
+  baseURL: BASE_URL,
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
 
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token');
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
+  (config: InternalAxiosRequestConfig) => config,
   (error) => Promise.reject(error),
 );
 
@@ -29,20 +25,9 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshResponse = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1'}/auth/refresh`,
-          {},
-          { withCredentials: true },
-        );
-        if (refreshResponse.status === 200) {
-          if (refreshResponse.data?.accessToken) {
-            localStorage.setItem('token', refreshResponse.data.accessToken);
-          }
-          return api(originalRequest);
-        }
+        await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
+        return api(originalRequest);
       } catch {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
         window.location.href = '/login';
       }
     }
