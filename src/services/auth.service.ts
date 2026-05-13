@@ -2,10 +2,9 @@ import api from './api';
 import { AdminUser } from '../types/auth.types';
 
 export const authService = {
-  login: async (email: string, password: string): Promise<{ user: AdminUser; accessToken: string }> => {
+  login: async (email: string, password: string): Promise<{ user: AdminUser }> => {
     const response = await api.post('/auth/login', { email, password, role: 'ADMIN' });
     if (response.data.user) localStorage.setItem('user', JSON.stringify(response.data.user));
-    if (response.data.accessToken) localStorage.setItem('token', response.data.accessToken);
     return response.data;
   },
 
@@ -14,7 +13,6 @@ export const authService = {
       await api.post('/auth/logout');
     } finally {
       localStorage.removeItem('user');
-      localStorage.removeItem('token');
     }
   },
 

@@ -31,7 +31,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
             className={`text-[10px] font-bold px-2 py-1 rounded-full ${
               trend.isPositive
                 ? 'bg-[var(--color-success-bg)] text-[var(--color-success-dark)]'
-                : 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'
+                : 'bg-[var(--color-error)]/10 text-[var(--color-error)]'
             }`}
           >
             {trend.isPositive ? '+' : '−'}{trend.value}%

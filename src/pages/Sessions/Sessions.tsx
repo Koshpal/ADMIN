@@ -44,7 +44,7 @@ function StarRating({ rating }: { rating: number }) {
       {[1, 2, 3, 4, 5].map((n) => (
         <Star
           key={n}
-          className={`w-3.5 h-3.5 ${n <= rating ? 'text-amber-400 fill-amber-400' : 'text-[var(--color-border-primary)]'}`}
+          className={`w-3.5 h-3.5 ${n <= rating ? 'text-[var(--color-warning)] fill-[var(--color-warning)]' : 'text-[var(--color-border-primary)]'}`}
         />
       ))}
       <span className="ml-1 text-xs font-semibold text-[var(--color-text-secondary)]">{rating}/5</span>
@@ -116,8 +116,8 @@ function SessionDetailDrawer({ session, onClose }: { session: AdminSession; onCl
 
           {/* Cancellation */}
           {session.status === 'CANCELLED' && session.cancellationReason && (
-            <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
-              <p className="text-xs font-bold uppercase tracking-widest text-red-500 mb-1">Cancellation Reason</p>
+            <div className="p-4 rounded-2xl bg-[var(--color-error)]/10 border border-[var(--color-error)]/20">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-error)] mb-1">Cancellation Reason</p>
               <p className="text-sm text-[var(--color-text-secondary)]">{session.cancellationReason}</p>
               {session.cancelledAt && (
                 <p className="text-xs text-[var(--color-text-muted)] mt-1">

@@ -36,7 +36,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       <div className="absolute inset-0 bg-[var(--color-overlay)]" onClick={onCancel} />
       <div className="relative w-full max-w-sm bg-[var(--color-bg-card)] rounded-2xl border border-[var(--color-border-primary)] shadow-xl p-6 animate-fade-in">
         <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
-          variant === 'danger' ? 'bg-red-50 dark:bg-red-900/20' : 'bg-amber-50 dark:bg-amber-900/20'
+          variant === 'danger' ? 'bg-[var(--color-error)]/10' : 'bg-[var(--color-warning)]/10'
         }`}>
           <AlertTriangle className={`w-6 h-6 ${variant === 'danger' ? 'text-[var(--color-error)]' : 'text-[var(--color-warning)]'}`} />
         </div>

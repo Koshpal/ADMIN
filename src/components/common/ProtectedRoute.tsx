@@ -17,7 +17,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         const user = JSON.parse(userStr);
         if (user.role !== 'ADMIN') {
           localStorage.removeItem('user');
-          localStorage.removeItem('token');
           setIsAuthenticated(false);
           return;
         }
@@ -25,7 +24,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         setIsAuthenticated(true);
       } catch {
         localStorage.removeItem('user');
-        localStorage.removeItem('token');
         setIsAuthenticated(false);
       }
     };
