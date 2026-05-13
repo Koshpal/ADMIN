@@ -1,0 +1,32 @@
+{
+  "name": "koshpal-admin-portal",
+  "version": "1.0.0",
+  "description": "Koshpal Super Admin Dashboard",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.16.0",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^1.14.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.15.0",
+    "recharts": "^2.15.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.11",
+    "@types/node": "^25.6.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.11"
+  }
+}
