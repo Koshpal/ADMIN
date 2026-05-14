@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Settings, LogOut, Shield } from 'lucide-react';
+import { Menu, Settings, LogOut } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { authService } from '../../services/auth.service';
 
@@ -55,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </button>
 
         <div className="hidden lg:flex items-center gap-2">
-          <Shield className="w-4 h-4 text-[var(--color-primary)]" />
+          <img src="/logo.png" alt="Koshpal" className="w-5 h-5" />
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]">
             Super Admin
           </span>

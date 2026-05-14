@@ -10,7 +10,6 @@ import {
   X,
   ChevronLeft,
   Rocket,
-  Shield,
   CalendarDays,
 } from 'lucide-react';
 
@@ -54,11 +53,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, 
           <div className="flex items-center justify-between px-6 border-b border-[var(--color-border-primary)] h-[89px]">
             {!isCollapsed && (
               <div className="flex items-center gap-3 transition-opacity duration-500">
-                <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)] flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 flex items-center justify-center">
+                  <img src="/logo.png" alt="Koshpal" className="w-8 h-8" />
                 </div>
                 <div>
-                  <span className="text-h3 text-[var(--color-text-primary)]">Koshpal</span>
+                  <span className="text-xl font-bold text-[var(--color-text-primary)] font-heading tracking-tight">
+                    Koshpal
+                  </span>
                   <span className="block text-[10px] font-bold uppercase tracking-widest text-[var(--color-primary)] opacity-70">
                     Super Admin
                   </span>
@@ -66,8 +67,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, 
               </div>
             )}
             {isCollapsed && (
-              <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)] flex items-center justify-center mx-auto">
-                <Shield className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 flex items-center justify-center mx-auto">
+                <img src="/logo.png" alt="Koshpal" className="w-8 h-8" />
               </div>
             )}
 
