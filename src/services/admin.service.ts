@@ -114,6 +114,7 @@ export const adminService = {
     search?: string;
     role?: UserRole;
     isActive?: boolean;
+    companyId?: string;
     page?: number;
     pageSize?: number;
   }): Promise<PaginatedResponse<UserRecord>> => {
