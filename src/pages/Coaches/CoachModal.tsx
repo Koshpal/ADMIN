@@ -68,10 +68,15 @@ export const CoachModal: React.FC<CoachModalProps> = ({ isOpen, coach, onClose, 
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!form.firstName.trim()) e.firstName = 'First name required.';
-    if (!form.lastName.trim()) e.lastName = 'Last name required.';
-    if (!form.email.trim()) e.email = 'Email required.';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email.';
+    if (!form.firstName.trim()) e.firstName = 'First name is required.';
+    if (!form.lastName.trim()) e.lastName = 'Last name is required.';
+    if (!form.email.trim()) e.email = 'Email is required.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = 'Please enter a valid email address.';
+    if (form.phone && !/^[+\d\s\-()]{7,20}$/.test(form.phone.trim())) {
+      e.phone = 'Enter a valid phone number (7–20 digits).';
+    }
+    if (form.experience < 0) e.experience = 'Experience cannot be negative.';
+    if (form.experience > 60) e.experience = 'Experience cannot exceed 60 years.';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -134,8 +139,15 @@ export const CoachModal: React.FC<CoachModalProps> = ({ isOpen, coach, onClose, 
           <FormField label="Email" required error={errors.email}>
             <Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="coach@example.com" error={!!errors.email} disabled={!!coach} />
           </FormField>
-          <FormField label="Phone">
-            <Input value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" />
+          <FormField label="Phone" error={errors.phone}>
+            <Input
+              type="tel"
+              value={form.phone}
+              onChange={(e) => set('phone', e.target.value.replace(/[^\d\s+\-()]/g, ''))}
+              placeholder="+91 98765 43210"
+              error={!!errors.phone}
+              maxLength={20}
+            />
           </FormField>
           <FormField label="Timezone">
             <select

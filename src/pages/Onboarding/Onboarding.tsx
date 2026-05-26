@@ -36,22 +36,30 @@ export const Onboarding: React.FC = () => {
   const setH = (k: string, v: any) => setHr((p) => ({ ...p, [k]: v }));
   const setK = (k: string, v: any) => setCoach((p) => ({ ...p, [k]: v }));
 
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const isValidPhone = (phone: string) => !phone.trim() || /^[+\d\s\-()]{7,20}$/.test(phone.trim());
+
   const validateStep = (s: number) => {
     const e: Record<string, string> = {};
     if (s === 1) {
-      if (!company.name.trim()) e.companyName = 'Company name required.';
+      if (!company.name.trim()) e.companyName = 'Company name is required.';
       if (company.employeeLimit < 1) e.employeeLimit = 'Employee limit must be at least 1.';
+      if (company.employeeLimit > 100000) e.employeeLimit = 'Employee limit cannot exceed 100,000.';
+      if (company.email && !isValidEmail(company.email)) e.companyEmail = 'Please enter a valid email address.';
+      if (!isValidPhone(company.phone)) e.companyPhone = 'Enter a valid phone number (7–20 digits).';
     }
     if (s === 2) {
-      if (!hr.fullName.trim()) e.hrName = 'Full name required.';
-      if (!hr.email.trim()) e.hrEmail = 'Email required.';
-      else if (!/\S+@\S+\.\S+/.test(hr.email)) e.hrEmail = 'Invalid email.';
+      if (!hr.fullName.trim()) e.hrName = 'Full name is required.';
+      if (!hr.email.trim()) e.hrEmail = 'Email is required.';
+      else if (!isValidEmail(hr.email)) e.hrEmail = 'Please enter a valid email address.';
+      if (!isValidPhone(hr.phone)) e.hrPhone = 'Enter a valid phone number (7–20 digits).';
     }
     if (s === 3 && includeCoach) {
-      if (!coach.firstName.trim()) e.coachFirstName = 'First name required.';
-      if (!coach.lastName.trim()) e.coachLastName = 'Last name required.';
-      if (!coach.email.trim()) e.coachEmail = 'Email required.';
-      else if (!/\S+@\S+\.\S+/.test(coach.email)) e.coachEmail = 'Invalid email.';
+      if (!coach.firstName.trim()) e.coachFirstName = 'First name is required.';
+      if (!coach.lastName.trim()) e.coachLastName = 'Last name is required.';
+      if (!coach.email.trim()) e.coachEmail = 'Email is required.';
+      else if (!isValidEmail(coach.email)) e.coachEmail = 'Please enter a valid email address.';
+      if (!isValidPhone(coach.phone)) e.coachPhone = 'Enter a valid phone number (7–20 digits).';
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -182,11 +190,18 @@ export const Onboarding: React.FC = () => {
               <FormField label="Employee Limit" required error={errors.employeeLimit}>
                 <Input type="number" min={1} value={company.employeeLimit} onChange={(e) => setC('employeeLimit', parseInt(e.target.value) || 1)} error={!!errors.employeeLimit} />
               </FormField>
-              <FormField label="Company Email">
-                <Input type="email" value={company.email} onChange={(e) => setC('email', e.target.value)} placeholder="info@acme.com" />
+              <FormField label="Company Email" error={errors.companyEmail}>
+                <Input type="email" value={company.email} onChange={(e) => setC('email', e.target.value)} placeholder="info@acme.com" error={!!errors.companyEmail} maxLength={100} />
               </FormField>
-              <FormField label="Phone">
-                <Input value={company.phone} onChange={(e) => setC('phone', e.target.value)} placeholder="+91 98765 43210" />
+              <FormField label="Phone" error={errors.companyPhone}>
+                <Input
+                  type="tel"
+                  value={company.phone}
+                  onChange={(e) => setC('phone', e.target.value.replace(/[^\d\s+\-()]/g, ''))}
+                  placeholder="+91 98765 43210"
+                  error={!!errors.companyPhone}
+                  maxLength={20}
+                />
               </FormField>
             </div>
             <FormField label="Address">
@@ -209,8 +224,15 @@ export const Onboarding: React.FC = () => {
               <FormField label="Email" required error={errors.hrEmail}>
                 <Input type="email" value={hr.email} onChange={(e) => setH('email', e.target.value)} placeholder="hr@acme.com" error={!!errors.hrEmail} />
               </FormField>
-              <FormField label="Phone">
-                <Input value={hr.phone} onChange={(e) => setH('phone', e.target.value)} placeholder="+91 98765 43210" />
+              <FormField label="Phone" error={errors.hrPhone}>
+                <Input
+                  type="tel"
+                  value={hr.phone}
+                  onChange={(e) => setH('phone', e.target.value.replace(/[^\d\s+\-()]/g, ''))}
+                  placeholder="+91 98765 43210"
+                  error={!!errors.hrPhone}
+                  maxLength={20}
+                />
               </FormField>
               <FormField label="Designation">
                 <Input value={hr.designation} onChange={(e) => setH('designation', e.target.value)} placeholder="HR Manager" />
@@ -252,8 +274,15 @@ export const Onboarding: React.FC = () => {
                 <FormField label="Email" required error={errors.coachEmail}>
                   <Input type="email" value={coach.email} onChange={(e) => setK('email', e.target.value)} placeholder="coach@example.com" error={!!errors.coachEmail} />
                 </FormField>
-                <FormField label="Phone">
-                  <Input value={coach.phone} onChange={(e) => setK('phone', e.target.value)} placeholder="+91 98765 43210" />
+                <FormField label="Phone" error={errors.coachPhone}>
+                  <Input
+                    type="tel"
+                    value={coach.phone}
+                    onChange={(e) => setK('phone', e.target.value.replace(/[^\d\s+\-()]/g, ''))}
+                    placeholder="+91 98765 43210"
+                    error={!!errors.coachPhone}
+                    maxLength={20}
+                  />
                 </FormField>
               </div>
             )}

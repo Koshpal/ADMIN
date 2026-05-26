@@ -18,6 +18,10 @@ export const Login: React.FC = () => {
       showToast('Please enter email and password.', 'warning');
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      showToast('Please enter a valid email address.', 'warning');
+      return;
+    }
     setIsLoading(true);
     try {
       await authService.login(email, password);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Bell, Palette, Globe, Lock, Mail, ChevronRight } from 'lucide-react';
+import { Shield, Bell, Palette, Globe, Lock, Mail, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../../context/ToastContext';
@@ -15,6 +15,13 @@ const sections = [
   { id: 'email', label: 'Email & SMTP', icon: Mail },
 ];
 
+const DEFAULT_NOTIFICATIONS = {
+  newCompany: true,
+  newCoach: true,
+  systemAlerts: true,
+  weeklyReport: false,
+};
+
 export const Settings: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const { showToast } = useToast();
@@ -24,25 +31,48 @@ export const Settings: React.FC = () => {
   const user = userStr ? JSON.parse(userStr) : {};
 
   const [passwordForm, setPasswordForm] = useState({ current: '', newPass: '', confirm: '' });
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isChangingPw, setIsChangingPw] = useState(false);
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const saved = localStorage.getItem('admin_notifications');
+      return saved ? JSON.parse(saved) : DEFAULT_NOTIFICATIONS;
+    } catch {
+      return DEFAULT_NOTIFICATIONS;
+    }
+  });
+
+  const toggleNotification = (key: keyof typeof DEFAULT_NOTIFICATIONS) => {
+    setNotifications((prev: typeof DEFAULT_NOTIFICATIONS) => {
+      const next = { ...prev, [key]: !prev[key] };
+      localStorage.setItem('admin_notifications', JSON.stringify(next));
+      return next;
+    });
+  };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!passwordForm.current) {
+      showToast('Current password is required.', 'error');
+      return;
+    }
+    if (passwordForm.newPass.length < 8) {
+      showToast('New password must be at least 8 characters.', 'warning');
+      return;
+    }
     if (passwordForm.newPass !== passwordForm.confirm) {
       showToast('New passwords do not match.', 'error');
       return;
     }
-    if (passwordForm.newPass.length < 8) {
-      showToast('Password must be at least 8 characters.', 'warning');
-      return;
-    }
     setIsChangingPw(true);
     try {
-      // In a real implementation, call the change password API
+      await authService.changePassword(passwordForm.current, passwordForm.newPass);
       showToast('Password changed successfully.', 'success');
       setPasswordForm({ current: '', newPass: '', confirm: '' });
-    } catch {
-      showToast('Failed to change password.', 'error');
+    } catch (err: any) {
+      showToast(err?.response?.data?.message || 'Failed to change password.', 'error');
     } finally {
       setIsChangingPw(false);
     }
@@ -81,28 +111,61 @@ export const Settings: React.FC = () => {
         return (
           <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
             <FormField label="Current Password" required>
-              <Input
-                type="password"
-                value={passwordForm.current}
-                onChange={(e) => setPasswordForm((p) => ({ ...p, current: e.target.value }))}
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Input
+                  type={showCurrent ? 'text' : 'password'}
+                  value={passwordForm.current}
+                  onChange={(e) => setPasswordForm((p) => ({ ...p, current: e.target.value }))}
+                  placeholder="••••••••"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrent((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
+                  tabIndex={-1}
+                >
+                  {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </FormField>
-            <FormField label="New Password" required>
-              <Input
-                type="password"
-                value={passwordForm.newPass}
-                onChange={(e) => setPasswordForm((p) => ({ ...p, newPass: e.target.value }))}
-                placeholder="Min. 8 characters"
-              />
+            <FormField label="New Password" required hint="Minimum 8 characters">
+              <div className="relative">
+                <Input
+                  type={showNew ? 'text' : 'password'}
+                  value={passwordForm.newPass}
+                  onChange={(e) => setPasswordForm((p) => ({ ...p, newPass: e.target.value }))}
+                  placeholder="Min. 8 characters"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
+                  tabIndex={-1}
+                >
+                  {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </FormField>
             <FormField label="Confirm New Password" required>
-              <Input
-                type="password"
-                value={passwordForm.confirm}
-                onChange={(e) => setPasswordForm((p) => ({ ...p, confirm: e.target.value }))}
-                placeholder="Repeat new password"
-              />
+              <div className="relative">
+                <Input
+                  type={showConfirm ? 'text' : 'password'}
+                  value={passwordForm.confirm}
+                  onChange={(e) => setPasswordForm((p) => ({ ...p, confirm: e.target.value }))}
+                  placeholder="Repeat new password"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
+                  tabIndex={-1}
+                >
+                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </FormField>
             <PrimaryButton type="submit" isLoading={isChangingPw}>Change Password</PrimaryButton>
 
@@ -142,22 +205,36 @@ export const Settings: React.FC = () => {
       case 'notifications':
         return (
           <div className="space-y-3 max-w-md">
-            {[
-              { label: 'New Company Registration', desc: 'Get notified when a new company is added.' },
-              { label: 'Coach Account Created', desc: 'Receive alerts when a new coach joins.' },
-              { label: 'System Alerts', desc: 'Critical platform health and error notifications.' },
-              { label: 'Weekly Report', desc: 'Weekly summary of platform activity.' },
-            ].map((n) => (
-              <div key={n.label} className="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border-primary)] bg-[var(--color-bg-secondary)]">
-                <div>
-                  <p className="font-semibold text-sm text-[var(--color-text-primary)]">{n.label}</p>
-                  <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">{n.desc}</p>
+            {([
+              { key: 'newCompany' as const, label: 'New Company Registration', desc: 'Get notified when a new company is added.' },
+              { key: 'newCoach' as const, label: 'Coach Account Created', desc: 'Receive alerts when a new coach joins.' },
+              { key: 'systemAlerts' as const, label: 'System Alerts', desc: 'Critical platform health and error notifications.' },
+              { key: 'weeklyReport' as const, label: 'Weekly Report', desc: 'Weekly summary of platform activity.' },
+            ]).map((n) => {
+              const isOn = notifications[n.key];
+              return (
+                <div key={n.key} className="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border-primary)] bg-[var(--color-bg-secondary)]">
+                  <div>
+                    <p className="font-semibold text-sm text-[var(--color-text-primary)]">{n.label}</p>
+                    <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">{n.desc}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => toggleNotification(n.key)}
+                    role="switch"
+                    aria-checked={isOn}
+                    aria-label={`Toggle ${n.label}`}
+                    className={`relative w-10 h-5 rounded-full transition-colors duration-200 flex-shrink-0 ${
+                      isOn ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border-secondary)]'
+                    }`}
+                  >
+                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${
+                      isOn ? 'translate-x-[22px]' : 'translate-x-0.5'
+                    }`} />
+                  </button>
                 </div>
-                <div className="w-10 h-5 rounded-full bg-[var(--color-primary)] relative cursor-pointer">
-                  <div className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-white shadow" />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         );
 

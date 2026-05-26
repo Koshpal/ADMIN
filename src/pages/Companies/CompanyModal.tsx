@@ -57,6 +57,16 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({ isOpen, company, onC
     const e: Partial<Record<keyof CreateCompanyPayload, string>> = {};
     if (!form.name.trim()) e.name = 'Company name is required.';
     if (form.employeeLimit < 1) e.employeeLimit = 'Must be at least 1.';
+    if (form.employeeLimit > 100000) e.employeeLimit = 'Employee limit cannot exceed 100,000.';
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      e.email = 'Please enter a valid email address.';
+    }
+    if (form.phone && !/^[+\d\s\-()]{7,20}$/.test(form.phone.trim())) {
+      e.phone = 'Enter a valid phone number (7–20 digits).';
+    }
+    if (form.website && !/^https?:\/\/.+\..+/.test(form.website.trim())) {
+      e.website = 'Website must start with http:// or https://';
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -109,20 +119,29 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({ isOpen, company, onC
             />
           </FormField>
 
-          <FormField label="Email">
+          <FormField label="Email" error={errors.email as string}>
             <Input
               type="email"
               value={form.email}
               onChange={(e) => set('email', e.target.value)}
               placeholder="hr@acme.com"
+              error={!!errors.email}
+              maxLength={100}
             />
           </FormField>
 
-          <FormField label="Phone">
+          <FormField label="Phone" error={errors.phone as string}>
             <Input
+              type="tel"
               value={form.phone}
-              onChange={(e) => set('phone', e.target.value)}
+              onChange={(e) => {
+                // Allow digits, spaces, +, -, (, ) only
+                const val = e.target.value.replace(/[^\d\s+\-()]/g, '');
+                set('phone', val);
+              }}
               placeholder="+91 98765 43210"
+              error={!!errors.phone}
+              maxLength={20}
             />
           </FormField>
 
@@ -143,11 +162,13 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({ isOpen, company, onC
             />
           </FormField>
 
-          <FormField label="Website">
+          <FormField label="Website" error={errors.website as string}>
             <Input
               value={form.website}
               onChange={(e) => set('website', e.target.value)}
               placeholder="https://acme.com"
+              error={!!errors.website}
+              maxLength={200}
             />
           </FormField>
 

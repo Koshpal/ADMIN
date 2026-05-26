@@ -88,15 +88,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, 
                 <ChevronLeft className="w-5 h-5" />
               </button>
             )}
-            {onToggleCollapse && isCollapsed && (
-              <button
-                onClick={onToggleCollapse}
-                className="hidden lg:block p-2 rounded-lg hover:opacity-80 transition-all bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] absolute bottom-6 left-1/2 -translate-x-1/2"
-                aria-label="Expand sidebar"
-              >
-                <ChevronLeft className="w-5 h-5 rotate-180" />
-              </button>
-            )}
           </div>
 
           {/* Navigation */}
@@ -140,16 +131,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, 
           </nav>
 
           {/* Footer */}
-          {!isCollapsed && (
-            <div className="p-4 border-t border-[var(--color-border-primary)]">
+          <div className="p-4 border-t border-[var(--color-border-primary)]">
+            {!isCollapsed ? (
               <div className="px-3 py-2 rounded-xl bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/20">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-primary)] mb-0.5">
                   Admin Access
                 </p>
                 <p className="text-xs text-[var(--color-text-secondary)]">Full platform control</p>
               </div>
-            </div>
-          )}
+            ) : (
+              onToggleCollapse && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={onToggleCollapse}
+                    className="hidden lg:block p-2 rounded-lg hover:opacity-80 transition-all bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]"
+                    aria-label="Expand sidebar"
+                  >
+                    <ChevronLeft className="w-5 h-5 rotate-180" />
+                  </button>
+                </div>
+              )
+            )}
+          </div>
         </div>
       </aside>
     </>
