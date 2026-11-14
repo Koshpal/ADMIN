@@ -12,6 +12,14 @@ import { Analytics } from './pages/Analytics/Analytics';
 import { Settings } from './pages/Settings/Settings';
 import { Onboarding } from './pages/Onboarding/Onboarding';
 import { Sessions } from './pages/Sessions/Sessions';
+import { Assignments } from './pages/Coaching/Assignments';
+import { Programs } from './pages/Coaching/Programs';
+import { Escalations } from './pages/Coaching/Escalations';
+import { Playbook } from './pages/Coaching/Playbook';
+import { Quality } from './pages/Coaching/Quality';
+import { Operations } from './pages/Coaching/Operations';
+import { Learning } from './pages/Coaching/Learning';
+import { Content } from './pages/Coaching/Content';
 
 function App() {
   return (
@@ -33,6 +41,14 @@ function App() {
               <Route path="/coaches" element={<Coaches />} />
               <Route path="/users" element={<Users />} />
               <Route path="/sessions" element={<Sessions />} />
+              <Route path="/coaching/assignments" element={<Assignments />} />
+              <Route path="/coaching/programs" element={<Programs />} />
+              <Route path="/coaching/operations" element={<Operations />} />
+              <Route path="/coaching/escalations" element={<Escalations />} />
+              <Route path="/coaching/playbook" element={<Playbook />} />
+              <Route path="/coaching/quality" element={<Quality />} />
+              <Route path="/coaching/learning" element={<Learning />} />
+              <Route path="/coaching/content" element={<Content />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/settings" element={<Settings />} />

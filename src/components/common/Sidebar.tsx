@@ -1,17 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { coachingAdminService } from '../../services/coaching.service';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  Building2,
-  UserCheck,
-  Users,
-  BarChart3,
-  Settings,
-  X,
-  ChevronLeft,
-  Rocket,
-  CalendarDays,
-} from 'lucide-react';
+import { LayoutDashboard, Building2, UserCheck, Users, BarChart3, Settings, X, ChevronLeft, Rocket, CalendarDays, Link2, BookOpenCheck, LifeBuoy, BookText, ClipboardCheck, Gauge, GraduationCap, Wrench } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -20,12 +10,21 @@ interface SidebarProps {
   onToggleCollapse?: () => void;
 }
 
-const menuItems = [
+/** `permission`: item is shown only to admins who hold it (enforced again by the API). */
+const menuItems: { icon: React.ElementType; label: string; path: string; permission?: string }[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Building2, label: 'Companies', path: '/companies' },
   { icon: UserCheck, label: 'Coaches', path: '/coaches' },
   { icon: Users, label: 'Users', path: '/users' },
   { icon: CalendarDays, label: 'Sessions', path: '/sessions' },
+  { icon: Link2, label: 'Coach Assignments', path: '/coaching/assignments', permission: 'admin.coaches.read' },
+  { icon: BookOpenCheck, label: 'Programs & Templates', path: '/coaching/programs', permission: 'admin.programs.manage' },
+  { icon: Gauge, label: 'Coaching Operations', path: '/coaching/operations', permission: 'admin.dashboard.read' },
+  { icon: LifeBuoy, label: 'Escalations', path: '/coaching/escalations', permission: 'admin.escalations.manage' },
+  { icon: BookText, label: 'Playbook', path: '/coaching/playbook', permission: 'admin.playbook.manage' },
+  { icon: ClipboardCheck, label: 'Quality & Supervision', path: '/coaching/quality', permission: 'admin.sessions.audit' },
+  { icon: GraduationCap, label: 'Learning & Certification', path: '/coaching/learning', permission: 'admin.certification.approve' },
+  { icon: Wrench, label: 'Tools & Worksheets', path: '/coaching/content', permission: 'admin.programs.manage' },
   { icon: BarChart3, label: 'Analytics', path: '/analytics' },
   { icon: Rocket, label: 'Onboarding', path: '/onboarding' },
   { icon: Settings, label: 'Settings', path: '/settings' },
@@ -34,6 +33,10 @@ const menuItems = [
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [allowed, setAllowed] = useState<string[] | null>(null);
+  useEffect(() => { coachingAdminService.myPermissions().then((p) => setAllowed(p.effective)).catch(() => setAllowed([])); }, []);
+  const visibleItems = menuItems.filter((i) => !i.permission || allowed?.includes(i.permission));
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
 
@@ -93,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-6">
             <ul className="space-y-1 px-3">
-              {menuItems.map((item) => {
+              {visibleItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
 
