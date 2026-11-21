@@ -18,7 +18,8 @@ export const Assignments: React.FC = () => {
   const [rows, setRows] = useState<AssignmentRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<'ACTIVE' | 'ENDED' | ''>('ACTIVE');
+  const [status, setStatus] = useState<'ACTIVE' | 'ENDED' | 'PENDING' | ''>('ACTIVE');
+  const [approving, setApproving] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const PAGE = 15;
@@ -26,26 +27,38 @@ export const Assignments: React.FC = () => {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await coachingAdminService.assignments({ status: status || undefined, page, pageSize: PAGE });
+      const r = await coachingAdminService.assignments(status === 'PENDING' ? { pending: true, page, pageSize: PAGE } : { status: status || undefined, page, pageSize: PAGE });
       setRows(r.items); setTotal(r.total);
     } catch (e) { showToast(apiMessage(e, 'Failed to load assignments.'), 'error'); } finally { setLoading(false); }
   }, [status, page, showToast]);
   useEffect(() => { void load(); }, [load]);
 
+  const approve = async (r: AssignmentRow) => {
+    setApproving(r.id);
+    try { await coachingAdminService.approveAssignment(r.id); showToast(`${r.coach.name} confirmed as ${r.employee.name}'s coach.`, 'success'); await load(); }
+    catch (e) { showToast(apiMessage(e, 'Could not approve this assignment.'), 'error'); } finally { setApproving(null); }
+  };
+
   const columns: Column<AssignmentRow>[] = [
     { key: 'employee', label: 'Employee', render: (r) => <div><p className="font-semibold">{r.employee.name}</p><p className="text-xs text-[var(--color-text-tertiary)]">{r.employee.company ?? '—'}</p></div> },
     { key: 'coach', label: 'Coach', render: (r) => r.coach.name },
-    { key: 'status', label: 'Status', render: (r) => <StatusBadge variant={r.status === 'ACTIVE' ? 'success' : 'neutral'} label={r.status === 'ACTIVE' ? 'Active' : 'Ended'} /> },
+    { key: 'status', label: 'Status', render: (r) => r.pendingApproval
+      ? <StatusBadge variant="warning" label="Awaiting approval" />
+      : <StatusBadge variant={r.status === 'ACTIVE' ? 'success' : 'neutral'} label={r.status === 'ACTIVE' ? 'Active' : 'Ended'} /> },
     { key: 'period', label: 'Period', render: (r) => `${format(new Date(r.startedAt), 'd MMM yyyy')}${r.endedAt ? ` → ${format(new Date(r.endedAt), 'd MMM yyyy')}` : ' → present'}` },
     { key: 'reason', label: 'Reason', render: (r) => r.reason ?? '—' },
+    { key: 'actions', label: '', render: (r) => r.pendingApproval ? (
+      <button onClick={() => void approve(r)} disabled={approving === r.id} title="Confirm this coach for the employee. To pick a different coach, use Assign instead."
+        className="rounded-lg bg-[var(--color-primary)] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60">{approving === r.id ? 'Approving…' : 'Approve'}</button>
+    ) : null },
   ];
 
   return (
     <div>
-      <PageHeader title="Coach assignments" subtitle="Assign and reassign employees. History is never overwritten." breadcrumb="Coaching"
+      <PageHeader title="Coach assignments" subtitle="The first coach an employee books is assigned automatically and waits here for your approval. Assign or reassign any time; history is never overwritten." breadcrumb="Coaching"
         actions={<>
           <select aria-label="Status filter" value={status} onChange={(e) => { setStatus(e.target.value as any); setPage(1); }} className={`${input} !w-auto`}>
-            <option value="ACTIVE">Active</option><option value="ENDED">Ended</option><option value="">All</option>
+            <option value="ACTIVE">Active</option><option value="PENDING">Awaiting approval</option><option value="ENDED">Ended</option><option value="">All</option>
           </select>
           <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white"><UserPlus className="h-4 w-4" />Assign employee</button>
         </>} />
