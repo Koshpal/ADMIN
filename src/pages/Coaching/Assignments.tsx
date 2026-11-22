@@ -20,6 +20,8 @@ export const Assignments: React.FC = () => {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<'ACTIVE' | 'ENDED' | 'PENDING' | ''>('ACTIVE');
   const [approving, setApproving] = useState<string | null>(null);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [pick, setPick] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const PAGE = 15;
@@ -32,10 +34,11 @@ export const Assignments: React.FC = () => {
     } catch (e) { showToast(apiMessage(e, 'Failed to load assignments.'), 'error'); } finally { setLoading(false); }
   }, [status, page, showToast]);
   useEffect(() => { void load(); }, [load]);
+  useEffect(() => { coachingAdminService.programs().then((p) => setPrograms(p.filter((x) => x.isActive))).catch(() => { /* needs programme permission; approving still works without it */ }); }, []);
 
   const approve = async (r: AssignmentRow) => {
     setApproving(r.id);
-    try { await coachingAdminService.approveAssignment(r.id); showToast(`${r.coach.name} confirmed as ${r.employee.name}'s coach.`, 'success'); await load(); }
+    try { await coachingAdminService.approveAssignment(r.id, r.program ? undefined : pick[r.id]); showToast(`${r.coach.name} confirmed as ${r.employee.name}'s coach.`, 'success'); await load(); }
     catch (e) { showToast(apiMessage(e, 'Could not approve this assignment.'), 'error'); } finally { setApproving(null); }
   };
 
@@ -47,9 +50,20 @@ export const Assignments: React.FC = () => {
       : <StatusBadge variant={r.status === 'ACTIVE' ? 'success' : 'neutral'} label={r.status === 'ACTIVE' ? 'Active' : 'Ended'} /> },
     { key: 'period', label: 'Period', render: (r) => `${format(new Date(r.startedAt), 'd MMM yyyy')}${r.endedAt ? ` → ${format(new Date(r.endedAt), 'd MMM yyyy')}` : ' → present'}` },
     { key: 'reason', label: 'Reason', render: (r) => r.reason ?? '—' },
+    { key: 'program', label: 'Programme', render: (r) => r.status !== 'ACTIVE' ? '—' : r.program
+      ? r.program.name
+      : <span className="text-[var(--color-warning-dark)] font-semibold" title="The coach cannot start a session until the employee is on a programme.">Not enrolled</span> },
     { key: 'actions', label: '', render: (r) => r.pendingApproval ? (
-      <button onClick={() => void approve(r)} disabled={approving === r.id} title="Confirm this coach for the employee. To pick a different coach, use Assign instead."
+      <div className="flex items-center gap-2">
+        {!r.program && programs.length > 0 && (
+          <select aria-label="Programme" value={pick[r.id] ?? ''} onChange={(e) => setPick((p) => ({ ...p, [r.id]: e.target.value }))} className={`${input} !w-auto !py-1.5 text-xs`}>
+            <option value="">Programme…</option>
+            {programs.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+        )}
+      <button onClick={() => void approve(r)} disabled={approving === r.id || (!r.program && programs.length > 0 && !pick[r.id])} title="Confirm this coach for the employee. To pick a different coach, use Assign instead."
         className="rounded-lg bg-[var(--color-primary)] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60">{approving === r.id ? 'Approving…' : 'Approve'}</button>
+      </div>
     ) : null },
   ];
 

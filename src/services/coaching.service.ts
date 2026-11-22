@@ -8,6 +8,8 @@ export interface AssignmentRow {
   coach: { id: string; name: string }; employee: { id: string; name: string; company: string | null };
   /** ADMIN = assigned by an admin; BOOKING = created when the employee booked their first coach */
   source?: 'ADMIN' | 'BOOKING'; pendingApproval?: boolean; approvedAt?: string | null;
+  /** the programme the employee is currently on; a coach cannot start a session until there is one */
+  program?: { id: string; name: string } | null;
 }
 export interface Program { id: string; name: string; description: string | null; isActive: boolean; _count: { enrollments: number } }
 export interface Template {
@@ -26,7 +28,7 @@ export const coachingAdminService = {
     api.get<{ total: number; page: number; pageSize: number; items: AssignmentRow[] }>(`${A}/assignments`, { params }).then((r) => r.data),
   assign: (body: { coachId: string; employeeId: string; reason?: string; importantInformation?: string; programId?: string }) =>
     api.post<AssignResult>(`${A}/assignments`, body).then((r) => r.data),
-  approveAssignment: (id: string) => api.post<{ approved: boolean; alreadyApproved: boolean }>(`${A}/assignments/${id}/approve`).then((r) => r.data),
+  approveAssignment: (id: string, programId?: string) => api.post<{ approved: boolean; alreadyApproved: boolean }>(`${A}/assignments/${id}/approve`, programId ? { programId } : {}).then((r) => r.data),
   programs: () => api.get<Program[]>(`${A}/programs`).then((r) => r.data),
   templates: (programId: string) => api.get<Template[]>(`${A}/programs/${programId}/templates`).then((r) => r.data),
   activateTemplate: (id: string) => api.post(`${A}/templates/${id}/activate`).then((r) => r.data),
