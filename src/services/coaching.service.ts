@@ -22,7 +22,15 @@ export interface AssignResult {
   upcomingBookingsWithPreviousCoach: { id: string; slotStart: string }[];
 }
 
+export interface ConsentText {
+  id: string; scope: 'COACHING_PROGRAM' | string; version: number; title: string; body: string;
+  disclosures: { key: string; text: string }[]; isCurrent: boolean; isPlaceholder: boolean; createdAt: string;
+}
+
 export const coachingAdminService = {
+  consentTexts: () => api.get<ConsentText[]>(`${A}/consent-texts`, { params: { scope: 'COACHING_PROGRAM' } }).then((r) => r.data),
+  publishConsentText: (body: { title: string; body: string; disclosures: { key: string; text: string }[]; isPlaceholder: boolean }) =>
+    api.post<ConsentText>(`${A}/consent-texts`, { scope: 'COACHING_PROGRAM', ...body }).then((r) => r.data),
   myPermissions: () => api.get<MyPermissions>(`${A}/me/permissions`).then((r) => r.data),
   assignments: (params: { status?: string; pending?: boolean; page?: number; pageSize?: number }) =>
     api.get<{ total: number; page: number; pageSize: number; items: AssignmentRow[] }>(`${A}/assignments`, { params }).then((r) => r.data),

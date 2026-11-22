@@ -20,6 +20,7 @@ import { Quality } from './pages/Coaching/Quality';
 import { Operations } from './pages/Coaching/Operations';
 import { Learning } from './pages/Coaching/Learning';
 import { Content } from './pages/Coaching/Content';
+import { Consent } from './pages/Coaching/Consent';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
               <Route path="/coaching/quality" element={<Quality />} />
               <Route path="/coaching/learning" element={<Learning />} />
               <Route path="/coaching/content" element={<Content />} />
+              <Route path="/coaching/consent" element={<Consent />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/settings" element={<Settings />} />

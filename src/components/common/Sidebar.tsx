@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { coachingAdminService } from '../../services/coaching.service';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Building2, UserCheck, Users, BarChart3, Settings, X, ChevronLeft, Rocket, CalendarDays, Link2, BookOpenCheck, LifeBuoy, BookText, ClipboardCheck, Gauge, GraduationCap, Wrench } from 'lucide-react';
+import { LayoutDashboard, Building2, UserCheck, Users, BarChart3, Settings, X, ChevronLeft, Rocket, CalendarDays, Link2, BookOpenCheck, LifeBuoy, BookText, ClipboardCheck, Gauge, GraduationCap, Wrench, ShieldCheck } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -25,6 +25,7 @@ const menuItems: { icon: React.ElementType; label: string; path: string; permiss
   { icon: ClipboardCheck, label: 'Quality & Supervision', path: '/coaching/quality', permission: 'admin.sessions.audit' },
   { icon: GraduationCap, label: 'Learning & Certification', path: '/coaching/learning', permission: 'admin.certification.approve' },
   { icon: Wrench, label: 'Tools & Worksheets', path: '/coaching/content', permission: 'admin.programs.manage' },
+  { icon: ShieldCheck, label: 'Coaching Consent', path: '/coaching/consent', permission: 'admin.consent.manage' },
   { icon: BarChart3, label: 'Analytics', path: '/analytics' },
   { icon: Rocket, label: 'Onboarding', path: '/onboarding' },
   { icon: Settings, label: 'Settings', path: '/settings' },
