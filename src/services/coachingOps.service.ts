@@ -35,8 +35,8 @@ export interface Correction { id: string; sessionId: string; fieldKey: string | 
 export interface Module { id: string; key: string; title: string; kind: string; description: string | null; content: string | null; orderIndex: number; isRequired: boolean; requiredCount: number; isActive: boolean; isPlaceholderContent: boolean; assessments: { id: string; title: string }[] }
 export interface RosterRow { coachId: string; coachName: string | null; status: string; certifiedAt: string | null; expiresAt: string | null; readyForApproval: boolean }
 export interface ToolCfg { key: string; configured: boolean; taxYear: string | null; source: string | null; reviewedAt: string | null; config: any }
-export interface WorksheetField { key: string; label: string; type: 'text' | 'number' | 'longtext'; required?: boolean }
-export interface Worksheet { id: string; key: string; title: string; description: string | null; fields: WorksheetField[]; isActive: boolean }
+export interface WorksheetField { key: string; label: string; type: 'text' | 'number' | 'longtext' | 'choice' | 'scale'; required?: boolean; help?: string; options?: string[] }
+export interface Worksheet { id: string; key: string; title: string; description: string | null; category: string; estimatedMinutes: number | null; fields: WorksheetField[]; isActive: boolean }
 
 export const opsAdmin = {
   dashboard: () => get<Dashboard>('/dashboard'), workload: () => get<{ capacityTarget: number; totalSlotsFree: number; coaches: WorkloadRow[] }>('/workload'),
