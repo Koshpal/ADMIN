@@ -20,12 +20,12 @@ interface PageMetaEntry {
 const DEFAULT_ENTRY: PageMetaEntry = {
   path: '/',
   title: 'Admin Portal',
-  description: 'Koshpal admin portal: manage companies, coaches, employees, sessions and the coaching programme.',
+  description: 'Admin Portal for Koshpal’s employee financial wellness program: manage companies, coaches, employees, sessions and the coaching program.',
 };
 
 export const PAGES: PageMetaEntry[] = [
-  { path: '/login', title: 'Admin Login', description: 'Sign in to the Koshpal admin portal to manage companies, coaches, employees and coaching sessions.' },
-  { path: '/dashboard', title: 'Dashboard', description: 'Platform-wide overview of companies, coaches, employees, sessions and activity across Koshpal.' },
+  { path: '/login', title: 'Admin Login', description: 'Sign in to the Koshpal admin portal to manage employee financial wellness: companies, coaches, employees and coaching sessions.' },
+  { path: '/dashboard', title: 'Dashboard', description: 'Platform-wide overview of the employee financial wellness program: companies, coaches, employees, sessions and activity.' },
   { path: '/companies', title: 'Companies', description: 'Add and manage the companies on Koshpal, their HR contacts, employee counts and plans.' },
   { path: '/coaches', title: 'Coaches', description: 'Review, onboard and manage the certified financial coaches on the Koshpal platform.' },
   { path: '/users', title: 'Users', description: 'Search and manage employee, HR and coach accounts across every company.' },
@@ -39,7 +39,7 @@ export const PAGES: PageMetaEntry[] = [
   { path: '/coaching/learning', title: 'Coach Learning', description: 'Manage coach training modules, progress and certification status.' },
   { path: '/coaching/content', title: 'Coaching Content', description: 'Manage worksheets, homework templates and financial tools shown to coaches and employees.' },
   { path: '/coaching/consent', title: 'Consent Management', description: 'Manage coaching consent text and versions, and see which employees have given consent.' },
-  { path: '/analytics', title: 'Analytics', description: 'Platform analytics: adoption, session volume, engagement and outcomes across all companies.' },
+  { path: '/analytics', title: 'Analytics', description: 'Analytics for the employee financial wellness program: adoption, session volume, engagement and outcomes across companies.' },
   { path: '/onboarding', title: 'Onboarding', description: 'Onboard new companies and bulk-add employees to Koshpal.' },
   { path: '/settings', title: 'Settings', description: 'Admin account, security and platform settings for the Koshpal admin portal.' },
 ];
@@ -77,7 +77,7 @@ export default function PageMeta() {
   const { pathname } = useLocation();
   useEffect(() => {
     const { entry, canonical } = resolvePageMeta(pathname);
-    const title = entry === DEFAULT_ENTRY ? 'Koshpal Admin Portal' : `${entry.title} | ${PORTAL}`;
+    const title = entry === DEFAULT_ENTRY ? 'Koshpal Admin Portal: Employee Financial Wellness' : `${entry.title} | ${PORTAL}`;
     document.title = title;
     setMeta('name', 'description', entry.description);
     setMeta('name', 'robots', 'index, follow');
