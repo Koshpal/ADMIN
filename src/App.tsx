@@ -17,6 +17,7 @@ import { Programs } from './pages/Coaching/Programs';
 import { Escalations } from './pages/Coaching/Escalations';
 import { Playbook } from './pages/Coaching/Playbook';
 import { Quality } from './pages/Coaching/Quality';
+import PageMeta from './components/PageMeta';
 import { Operations } from './pages/Coaching/Operations';
 import { Learning } from './pages/Coaching/Learning';
 import { Content } from './pages/Coaching/Content';
@@ -27,6 +28,7 @@ function App() {
     <ToastProvider>
       <ThemeProvider>
         <Router>
+          <PageMeta />
           <Routes>
             <Route path="/login" element={<Login />} />
 
