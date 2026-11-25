@@ -41,7 +41,7 @@ const ToolConfigs: React.FC = () => {
   );
 };
 
-const CATEGORIES: [string, string][] = [['BUDGETING', 'Budgeting'], ['SPENDING', 'Spending'], ['SAVINGS', 'Savings'], ['DEBT', 'Debt'], ['GOALS', 'Goals'], ['PLANNING', 'Planning'], ['PROTECTION', 'Protection'], ['MINDSET', 'Mindset'], ['FOLLOW_UP', 'Follow-up'], ['GENERAL', 'General']];
+const CATEGORIES: [string, string][] = [['FOUNDATION', 'Foundation program'], ['BUDGETING', 'Budgeting'], ['SPENDING', 'Spending'], ['SAVINGS', 'Savings'], ['DEBT', 'Debt'], ['GOALS', 'Goals'], ['PLANNING', 'Planning'], ['PROTECTION', 'Protection'], ['MINDSET', 'Mindset'], ['FOLLOW_UP', 'Follow-up'], ['GENERAL', 'General']];
 /** A question while editing: `optionsText` is the comma-separated text of a choice question's options. */
 type Q = WorksheetField & { optionsText?: string };
 const blankQ = (n: number): Q => ({ key: `answer${n}`, label: '', type: 'text' });
